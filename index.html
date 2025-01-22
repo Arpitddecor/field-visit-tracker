@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Field Staff Visit Tracker</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa; /* Light background similar to sansaar.co.in */
+      color: #333; /* Neutral text color */
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #343a40; /* Dark navbar */
+      padding: 15px;
+      text-align: center;
+      color: white;
+    }
+    header img {
+      max-height: 50px;
+    }
+    main {
+      padding: 20px;
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    main h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007bff; /* Blue theme accent */
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      border: 1px solid #ced4da; /* Light gray border */
+      border-radius: 5px;
+    }
+    button {
+      background-color: #007bff; /* Primary button color */
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3; /* Darker blue on hover */
+    }
+    footer {
+      text-align: center;
+      padding: 10px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://www.sansaar.co.in/assets/images/logo.png" alt="Sansaar Logo">
+  </header>
+  <main>
+    <h2>Field Staff Visit Tracker</h2>
+    <form id="visitForm">
+      <input type="text" id="employeeName" placeholder="Employee Name" required>
+      <input type="text" id="storeLocation" placeholder="Store Location (GPS)" readonly>
+      <button type="button" id="getLocation">Get Location</button>
+      <textarea id="visitFeedback" placeholder="Visit Feedback" rows="4" required></textarea>
+      <input type="number" id="timeSpent" placeholder="Time Spent (minutes)" required>
+      <button type="submit">Submit</button>
+    </form>
+  </main>
+  <footer>
+    © 2025 Sansaar. All rights reserved.
+  </footer>
+  <script>
+    const form = document.getElementById('visitForm');
+    const getLocationBtn = document.getElementById('getLocation');
+    const storeLocationInput = document.getElementById('storeLocation');
+
+    // Get GPS location
+    getLocationBtn.addEventListener('click', () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          storeLocationInput.value = `Lat: ${lat}, Lon: ${lon}`;
+        });
+      } else {
+        alert("Geolocation is not supported by your browser.");
+      }
+    });
+
+    // Submit the form
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        employeeName: document.getElementById('employeeName').value,
+        storeLocation: document.getElementById('storeLocation').value,
+        visitFeedback: document.getElementById('visitFeedback').value,
+        timeSpent: document.getElementById('timeSpent').value,
+      };
+
+      const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        alert("Data submitted successfully!");
+        form.reset();
+      } else {
+        alert(`Error: ${result.message}`);
+      }
+    });
+  </script>
+</body>
+</html>
